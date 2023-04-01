@@ -1,16 +1,26 @@
 import React, { useEffect, memo, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { getConsigneeList } from "../../asiox";
+import { getConsigneeList, commitOrderBatch } from "../../asiox";
+import { Select, InputNumber, message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export default memo(function Buy() {
   const { state: goodsList } = useLocation();
   const [consignee, setConsignee] = useState([]);
   const [goodsListCount, setGoodsListCount] = useState([]);
+  const [consigneeId, setConsigneeId] = useState({});
+  const navigate = useNavigate();
   useEffect(() => {
     setGoodsListCount(goodsList);
+  }, []);
+  useEffect(() => {
     getConsigneeList().then((res) => {
       if (res.status === 200) {
         setConsignee(res.data);
+        setConsigneeId({
+          value: res.data[0].id,
+          label: `${res.data[0].receiver}+${res.data[0].telephone}+${res.data[0].area}${res.data[0].address}`,
+        });
       }
     });
   }, []);
@@ -22,10 +32,30 @@ export default memo(function Buy() {
       .toFixed(2);
   };
 
+  const handleCHangeCount = (goods, type) => {
+    setGoodsListCount(
+      goodsListCount.map((item) => {
+        if (item.goodsId === goods.goodsId) {
+          let { count } = goods;
+          if (type === "add") {
+            count += 1;
+          } else {
+            count -= 1;
+          }
+          return {
+            ...item,
+            count,
+          };
+        }
+        return item;
+      })
+    );
+  };
+
   const createGoodsList = (goods) => {
     return (
       <div
-        key={goods.id}
+        key={goods.goodsId}
         className="h-32 flex justify-start w-full my-3 overflow-hidden shadow-md shadow-slate-300 rounded-lg"
       >
         <div className="w-1/3 border-2 overflow-hidden border-orange-400 rounded-lg">
@@ -42,9 +72,36 @@ export default memo(function Buy() {
               <span className="text-orange-600">{goods.price}</span>
             </div>
 
-            <div className="text-sm mt-3">{goods.goodsIntroduce}</div>
+            {/* <div className="text-sm mt-3">{goods.goodsIntroduce}</div> */}
           </div>
-          <div className="flex flex-col justify-between"></div>
+          <div className="flex flex-col justify-between">
+            <InputNumber
+              value={goods.count}
+              addonBefore={
+                <span
+                  onClick={(e) => {
+                    handleCHangeCount(goods, "sub");
+                  }}
+                >
+                  -
+                </span>
+              }
+              addonAfter={
+                <span
+                  onClick={(e) => {
+                    handleCHangeCount(goods, "add");
+                  }}
+                >
+                  +
+                </span>
+              }
+              width={50}
+              style={{
+                width: 120,
+              }}
+              readOnly
+            />
+          </div>
         </div>
       </div>
     );
@@ -58,8 +115,48 @@ export default memo(function Buy() {
     );
   };
 
+  const handleChange = (e) => {
+    const current = consignee.filter((item) => item.id === e);
+    setConsigneeId({
+      value: e,
+      label: `${current[0].receiver}+${current[0].telephone}+${current[0].area}${current[0].address}`,
+    });
+  };
+
   const createConsignee = (consignee) => {
-    return <div></div>;
+    {
+      /* {consignee.map((item) => (
+          <Select.Option key={item.id}>
+            {item.receiver}+{item.telephone}+{item.area}
+            {item.address}
+          </Select.Option>
+        ))}
+      </Select> */
+    }
+    return (
+      <Select
+        onChange={handleChange}
+        value={consigneeId}
+        options={consignee.map((item) => ({
+          value: item.id,
+          label: `${item.receiver}+${item.telephone}+${item.area}${item.address}`,
+        }))}
+      />
+    );
+  };
+
+  const hendleBuy = () => {
+    console.log(goodsListCount);
+    const goodsCartList = goodsListCount.map((item) => ({
+      goodsId: item.goodsId,
+      count: item.count,
+    }));
+    commitOrderBatch(goodsCartList, consigneeId.value).then((res) => {
+      if (res.status === 201) {
+        message.success(res.data.msg);
+        navigate("/home/user");
+      }
+    });
   };
 
   return (
@@ -67,8 +164,9 @@ export default memo(function Buy() {
       <div className="text-center p-4 pb-2 text-2xl border-b">
         <h3>付款</h3>
       </div>
-      <div>
-        <div>地址详情</div>
+      <div className="flex justify-start items-center p-2">
+        <div>选择地址：</div>
+        {consignee && consignee.length && createConsignee(consignee)}
       </div>
       <div>
         {goodsListCount && goodsListCount.length
@@ -84,7 +182,10 @@ export default memo(function Buy() {
               ? calTotalPrice(goodsListCount)
               : 0}
           </div>
-          <div className="w-30 text-center bg-orange-500 h-full flex items-center justify-center">
+          <div
+            onClick={hendleBuy}
+            className="w-30 text-center  text-white text-xl bg-orange-500 h-full flex items-center justify-center"
+          >
             提交
           </div>
         </div>

@@ -52,4 +52,67 @@ export const getConsigneeList = async () => {
   }
 }
 
+export const getAreaList = async () => {
+  try {
+    const res = await instance.get("/buy/getAreaList");
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
+export const addNewConsignee = async (data) => {
+  try {
+    const res = await instance.post("/buy/addNewConsignee", data);
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
+export const getCartList = async () => {
+  try {
+    const res = await instance.get("/buy/getCartList");
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
+export const addCart = async (data) => {
+  try {
+    const res = await instance.post("/buy/addCart", data);
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
+export const commitOrderBatch = async (data, consigneeId) => {
+  try {
+    const res = await instance.post(`/buy/commitOrderBatch/${consigneeId}`, data);
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
+export const getOrderList = async () => {
+  try {
+    const res = await instance.get("/buy/getOrderList/");
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
+export const getOrderItemList = async (orderId) => {
+  try {
+    const res = await instance.get(`/buy/getOrderItemList/${orderId}`);
+    return res.data;
+  } catch (e) {
+    return e
+  }
+}
+
 
