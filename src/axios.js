@@ -1,7 +1,9 @@
 import axios from "axios";
 
+export const baseURL = "http://192.168.1.3:9999/shop/api/v1"
+
 const instance = axios.create({
-  baseURL: "http://localhost:9999/shop/api/v1",
+  baseURL,
   timeout: 10000
 });
 

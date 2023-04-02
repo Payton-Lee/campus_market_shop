@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCartList, addCart } from "../../asiox";
+import { getCartList, addCart, baseURL } from "../../axios";
 import { InputNumber, message } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -56,7 +56,7 @@ export default function Cart() {
         <div className="w-1/3 border-2 overflow-hidden border-orange-400 rounded-lg">
           <img
             className="w-full h-full"
-            src={`http://localhost:9999/shop/api/v1/image/${goods.image}`}
+            src={`${baseURL}/image/${goods.image}`}
           />
         </div>
         <div className="p-3 flex justify-between w-2/3">

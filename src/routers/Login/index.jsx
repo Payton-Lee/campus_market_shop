@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Input, message } from "antd";
-import { login } from "../../asiox";
+import { login } from "../../axios";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {

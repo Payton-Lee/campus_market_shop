@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import React, { useEffect } from "react";
 import { ShoppingCartOutlined } from "@ant-design/icons";
+import { baseURL } from "../../axios";
 import { useNavigate } from "react-router-dom";
 export default function GoodsItem(props) {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function GoodsItem(props) {
       <div className="w-1/3 border-2 overflow-hidden border-orange-400 rounded-lg">
         <img
           className="w-full h-full"
-          src={`http://localhost:9999/shop/api/v1/image/${goods.image}`}
+          src={`${baseURL}/image/${goods.image}`}
         />
       </div>
       <div className="p-3 flex justify-between w-2/3">

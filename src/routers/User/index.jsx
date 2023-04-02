@@ -8,7 +8,8 @@ import {
   addNewConsignee,
   getOrderList,
   getOrderItemList,
-} from "../../asiox";
+  baseURL,
+} from "../../axios";
 import { Modal } from "antd-mobile";
 
 export default function User() {
@@ -103,7 +104,7 @@ export default function User() {
                       <div className="h-40 flex items-center justify-between m-1.5 rounded-lg shadow-slate-300 shadow-md p-2 py-3 bg-light-500 opacity-95">
                         <img
                           className="w-3/5 h-full"
-                          src={`http://localhost:9999/shop/api/v1/image/${item.image}`}
+                          src={`${baseURL}/image/${item.image}`}
                           alt={`${item.goods}`}
                         />
                         <div className="flex flex-col justify-between h-20">
@@ -127,7 +128,7 @@ export default function User() {
           <span>
             订单价格：
             <span className="text-orange-500 text-xs">￥</span>
-            {order.orderPrice}
+            {order.orderPrice.toFixed(2)}
           </span>
         </div>
       </div>

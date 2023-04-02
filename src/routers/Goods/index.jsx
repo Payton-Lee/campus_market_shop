@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import GoodsItem from "../../components/GoodsItem";
-import { goodsList, addCart } from "../../asiox";
+import { goodsList, addCart } from "../../axios";
 import { Input, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
